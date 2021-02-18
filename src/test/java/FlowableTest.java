@@ -2,6 +2,8 @@ import hu.akarnokd.rxjava3.math.MathFlowable;
 import io.reactivex.rxjava3.core.Flowable;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 public class FlowableTest {
     @Test
     public void flowable_test() {
@@ -13,5 +15,8 @@ public class FlowableTest {
                 .to(MathFlowable::min)
                 .test()
                 .assertResult(1);
+
+        Flowable.fromArray(Arrays.asList("hello", "lee jinam", "my name is rx java", "nice to meet you"))
+                .subscribe(s -> System.out.println("subscribe.. " + s + "!"));
     }
 }
