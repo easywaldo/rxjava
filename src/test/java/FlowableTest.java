@@ -25,5 +25,9 @@ public class FlowableTest {
     public void observable_test() {
         Observable.just(10,20,30,40,50,60,70,80,90,100)
                 .subscribe(x -> System.out.println(x));
+
+        var coldPub = Observable.just(1,2,3,4,5);
+        coldPub.subscribe(x -> System.out.println("구독자 1 : " + x));
+        coldPub.subscribe(x -> System.out.println("구독자 2 : " + x));
     }
 }
