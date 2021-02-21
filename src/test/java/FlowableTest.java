@@ -1,5 +1,6 @@
 import hu.akarnokd.rxjava3.math.MathFlowable;
 import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Observable;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -18,5 +19,11 @@ public class FlowableTest {
 
         Flowable.fromArray(Arrays.asList("hello", "lee jinam", "my name is rx java", "nice to meet you"))
                 .subscribe(s -> System.out.println("subscribe.. " + s + "!"));
+    }
+
+    @Test
+    public void observable_test() {
+        Observable.just(10,20,30,40,50,60,70,80,90,100)
+                .subscribe(x -> System.out.println(x));
     }
 }
