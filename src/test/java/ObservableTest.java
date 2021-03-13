@@ -94,4 +94,21 @@ public class ObservableTest {
         Thread.sleep(1000L);
         System.out.println("Short Time 작업완료..." + LocalDateTime.now());
     }
+
+    @Test
+    public void flatmap_test() throws InterruptedException {
+        Observable.range(2, 1)
+                .flatMap(num -> Observable.range(1, 9).map(row -> num + " * " + row + " = " + num * row))
+                .subscribe(data -> System.out.println(data));
+        Thread.sleep(3000L);
+    }
+
+    @Test
+    public void flatmap_test_2() throws InterruptedException {
+        Observable.range(2, 1)
+                .flatMap(num -> Observable.range(1, 9),
+                        (source, transform) -> source + " * " + transform + " = " + source * transform)
+                .subscribe(data -> System.out.println(data));
+        Thread.sleep(3000L);
+    }
 }
