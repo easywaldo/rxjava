@@ -1,12 +1,15 @@
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.internal.util.HashMapSupplier;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ObservableTest {
 
@@ -109,6 +112,14 @@ public class ObservableTest {
                 .flatMap(num -> Observable.range(1, 9),
                         (source, transform) -> source + " * " + transform + " = " + source * transform)
                 .subscribe(data -> System.out.println(data));
+        Thread.sleep(3000L);
+    }
+
+    @Test
+    public void to_list_test() throws InterruptedException {
+        Single<List<Integer>> single = Observable.just(1,3,5,7,9).toList();
+        single.subscribe(data -> System.out.println(data));
+
         Thread.sleep(3000L);
     }
 }
