@@ -122,4 +122,12 @@ public class ObservableTest {
 
         Thread.sleep(3000L);
     }
+
+    @Test
+    public void to_map_test() throws InterruptedException {
+        Single<Map<String, String>> single = Observable.just("1-이채은", "2-이지남", "3-장미선", "4-임한규")
+                .toMap(s -> s.split("-")[0]);
+        single.subscribe(data -> System.out.println(data));
+        Thread.sleep(3000L);
+    }
 }
