@@ -1,15 +1,15 @@
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.internal.util.HashMapSupplier;
+import io.reactivex.rxjava3.observables.GroupedObservable;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class ObservableTest {
 
@@ -136,6 +136,20 @@ public class ObservableTest {
         Single<Map<String, String>> single = Observable.just("1-이채은", "2-이지남", "3-장미선", "4-임한규")
                 .toMap(s -> s.split("-")[0], s -> s.split("-")[1]);
         single.subscribe(data -> System.out.println(data));
+        Thread.sleep(3000L);
+    }
+
+    @Test
+    public void group_by_test() throws InterruptedException {
+
+        Car car1 = new Car ("avante","sedan","hyundai");
+        Car car2 = new Car("benz", "sedan","mercedez");
+        Car car3 = new Car("k9", "sedan", "hyundai");
+        List<Car> carList = Arrays.asList(car1, car2, car3);
+
+        Observable<GroupedObservable<String, Car>> observable =
+                Observable.fromIterable(carList).groupBy(Car::getCarType);
+        observable.subscribe(group -> group.subscribe(car -> System.out.println("Group : " + group.getKey() + ", " + car.getCarName())));
         Thread.sleep(3000L);
     }
 }
