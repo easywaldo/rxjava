@@ -152,4 +152,14 @@ public class ObservableTest {
         observable.subscribe(group -> group.subscribe(car -> System.out.println("Group : " + group.getKey() + ", " + car.getCarName())));
         Thread.sleep(3000L);
     }
+
+    @Test
+    public void delay_test() throws InterruptedException {
+        System.out.println("시작시간 : " + LocalDateTime.now());
+        Observable.just(1,2,3,4,5)
+            .doOnNext(data -> System.out.println("now is " + LocalDateTime.now() + " : " + data))
+            .delay(3000L, TimeUnit.MILLISECONDS)
+            .subscribe(data -> System.out.println("now is " + LocalDateTime.now() + " " + "sub data is : " + data));
+        Thread.sleep(3000L);
+    }
 }
