@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -153,6 +154,10 @@ public class ObservableTest {
         Thread.sleep(3000L);
     }
 
+    /***
+     * 전체 통지가 되기 전에 딜레이
+     * @throws InterruptedException
+     */
     @Test
     public void delay_test() throws InterruptedException {
         System.out.println("시작시간 : " + LocalDateTime.now());
@@ -160,6 +165,102 @@ public class ObservableTest {
             .doOnNext(data -> System.out.println("now is " + LocalDateTime.now() + " : " + data))
             .delay(3000L, TimeUnit.MILLISECONDS)
             .subscribe(data -> System.out.println("now is " + LocalDateTime.now() + " " + "sub data is : " + data));
+        Thread.sleep(3000L);
+    }
+
+    /***
+     * 각각에 대한 딜레이
+     * @throws InterruptedException
+     */
+    @Test
+    public void delay_test_v2() throws InterruptedException {
+        System.out.println("시작시간 : " + LocalDateTime.now());
+        Observable.just(1,2,3,4,5)
+            .doOnNext(data -> System.out.println("now is " + LocalDateTime.now() + " : " + data))
+            .delay(item -> {
+                Thread.sleep(2000L);
+                return Observable.just(item);
+            })
+            .subscribe(data -> System.out.println("now is " + LocalDateTime.now() + " " + "sub data is : " + data));
+        Thread.sleep(3000L);
+    }
+
+    @Test
+    public void delay_test_delay_sub() throws InterruptedException {
+        System.out.println("시작시간 : " + LocalDateTime.now());
+        Observable.just(1,2,3,4,5)
+            .doOnNext(data -> System.out.println("now is " + LocalDateTime.now() + " : " + data))
+            .delaySubscription(2000L, TimeUnit.MILLISECONDS)
+            .subscribe(data -> System.out.println("now is " + LocalDateTime.now() + " " + "sub data is : " + data));
+        Thread.sleep(3000L);
+    }
+
+    @Test
+    public void delay_test_delay_error() throws InterruptedException {
+        Observable.range(1, 5)
+            .map(num -> {
+                long time = 10000L;
+                if (num == 4) {
+                    time = 15000L;
+                }
+                Thread.sleep(time);
+                return num;
+            })
+            .timeout(1200L, TimeUnit.MILLISECONDS)
+            .subscribe(data -> System.out.println(data), error -> System.out.println(error));
+        Thread.sleep(3000L);
+    }
+
+    @Test
+    public void delay_test_delay_interval() throws InterruptedException {
+        Observable.just(2,4,6,8,10)
+            .delay(item -> {
+                Thread.sleep(new Random().nextInt(3000));
+                return Observable.just(item);
+            })
+            .timeInterval(TimeUnit.MILLISECONDS)
+            .subscribe(timed -> System.out.println("데이터 통지하는데 걸리는 시간: " + timed.time() + " 통지 데이터 :" + timed.value()));
+        Thread.sleep(3000L);
+    }
+
+    @Test
+    public void delay_test_delay_materialize() throws InterruptedException {
+        Observable.just(2,4,6,8,10)
+            .materialize()
+            .subscribe(notification -> {
+                String notificationType = notification.isOnNext() ? "onNext()" : (notification.isOnError() ?
+                    "onError()" : "onComplete()");
+                System.out.println("통지타입 :" + notificationType);
+                System.out.println(notification.getValue());
+            });
+
+        Thread.sleep(3000L);
+    }
+
+    @Test
+    public void delay_test_delay_concatEager() throws InterruptedException {
+       Observable.concatEager(
+           Arrays.asList(Observable.just(1,2,3,4,5), Observable.just(6,7,8,9,10).map(m -> {
+               if (m.equals(8)) {
+                   throw new IllegalArgumentException();
+               }
+               return m;
+           })))
+       .materialize()
+       .map(notification -> {
+           if (notification.isOnError()) {
+               System.out.println("error raised....");
+           }
+           return notification;
+       })
+       .filter(notification -> !notification.isOnError())
+       .dematerialize(notification -> notification)
+       .subscribe(
+           data -> System.out.println("onNext : " + data),
+           error -> System.out.println("onError : " + error),
+           () -> System.out.println("completed")
+       );
+
         Thread.sleep(3000L);
     }
 }
