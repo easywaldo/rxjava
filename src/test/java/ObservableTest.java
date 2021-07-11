@@ -263,4 +263,22 @@ public class ObservableTest {
 
         Thread.sleep(3000L);
     }
+
+    @Test
+    public void amb_test() throws InterruptedException {
+        List<Observable<Car>> observables = Arrays.asList(
+            Observable.fromIterable(Arrays.asList(new Car("ionic5", "electronic", "hyundai")))
+                .delay(200L, TimeUnit.MILLISECONDS)
+                .doOnComplete(() -> System.out.println("completed ionic5")),
+            Observable.fromIterable(Arrays.asList(new Car("benz", "gasoline", "mercedesz")))
+                .delay(300L, TimeUnit.MILLISECONDS)
+                .doOnComplete(() -> System.out.println("completed benz")));
+
+
+        Observable.amb(observables)
+            .doOnComplete(() -> System.out.println("모두 완료"))
+            .subscribe(data -> System.out.println(data));
+
+        Thread.sleep(10000L);
+    }
 }
