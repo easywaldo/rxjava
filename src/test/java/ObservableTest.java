@@ -281,4 +281,13 @@ public class ObservableTest {
 
         Thread.sleep(10000L);
     }
+
+    @Test
+    public void contains_test() {
+        Observable.fromIterable(Arrays.asList(1,2,3,4,5,100)).contains(5)
+            .subscribe(data -> System.out.println(data));
+
+        Observable.fromIterable(Arrays.asList(1,2,3,4,5,100)).contains(7)
+            .subscribe(data -> System.out.println(data));
+    }
 }
