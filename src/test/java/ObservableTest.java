@@ -312,4 +312,25 @@ public class ObservableTest {
             .subscribe(data -> System.out.println("subscribe : " + data));
 
     }
+
+    @Test
+    public void sequence_equals_test() {
+        Observable<Integer> listFirst =  Observable.just(1,2,3,4,5)
+            .doOnSubscribe(data -> System.out.println("data is " + data))
+            .doOnNext(data -> System.out.println("data is " + data));
+        Observable<Integer> listSecond = Observable.just(1,2,3,4,5)
+            .doOnSubscribe(data -> System.out.println("data is " + data))
+            .doOnNext(data -> System.out.println("data is " + data));
+        Observable.sequenceEqual(listFirst, listSecond)
+            .subscribe(System.out::println);
+
+        Observable<Integer> listThird =  Observable.just(0,1,2,3,4,5)
+            .doOnSubscribe(data -> System.out.println("data is " + data))
+            .doOnNext(data -> System.out.println("data is " + data));
+        Observable<Integer> listForth = Observable.just(1,2,3,4,5)
+            .doOnSubscribe(data -> System.out.println("data is " + data))
+            .doOnNext(data -> System.out.println("data is " + data));
+        Observable.sequenceEqual(listThird, listForth)
+            .subscribe(System.out::println);
+    }
 }
