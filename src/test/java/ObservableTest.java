@@ -4,10 +4,7 @@ import io.reactivex.rxjava3.observables.GroupedObservable;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -292,6 +289,27 @@ public class ObservableTest {
             .doOnNext(data -> System.out.println("data is " + data))
             .contains(5)
             .subscribe(data -> System.out.println(data));
+
+    }
+
+    @Test
+    public void default_if_empty_test() {
+        Observable.just(1,2,4,5,6,7)
+            .filter(x -> x > 10)
+            .defaultIfEmpty(10)
+            .doOnNext(data -> System.out.println("data is " + data))
+            .subscribe(data -> System.out.println("subscribe : " + data));
+
+        Observable.fromArray(Arrays.asList(1,100))
+            .defaultIfEmpty(Arrays.asList(1,2,3,4,5,6,7,8,9,10))
+            .doOnNext(data -> System.out.println("data is " + data))
+            .subscribe(data -> System.out.println("subscribe : " + data));
+
+        Observable.just(3,5,6,7)
+            .filter(x -> x < 3)
+            .doOnNext(data -> System.out.println("data is " + data))
+            .defaultIfEmpty(1)
+            .subscribe(data -> System.out.println("subscribe : " + data));
 
     }
 }
