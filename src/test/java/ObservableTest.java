@@ -347,4 +347,15 @@ public class ObservableTest {
             .reduce(Integer::sum)
             .subscribe(data -> System.out.println("Reduce is " + data));
     }
+
+    @Test
+    public void concat_test() {
+        Observable.concat(
+            Arrays.asList(
+                Observable.fromIterable(Arrays.asList(1,2,3,4,5,100)),
+                Observable.fromIterable(Arrays.asList(3,4,5,6,7,100)),
+                Observable.fromIterable(Arrays.asList(2,4,6,8,10,100)))
+        ).count()
+        .subscribe(data -> System.out.println("concat data is " + data));
+    }
 }
