@@ -365,4 +365,12 @@ public class ObservableTest {
             .scan((x, y) -> String.format("%s%s", x, y))
             .subscribe(result -> System.out.println("scan result is " + result));
     }
+
+    @Test
+    public void range_reduce_test() {
+        Observable.range(10, 10)
+            .doOnNext(data -> System.out.println("data is " + data))
+            .reduce((a, b) -> a - b)
+            .subscribe(data -> System.out.println("result is " + data));
+    }
 }
