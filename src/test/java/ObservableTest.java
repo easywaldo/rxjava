@@ -358,4 +358,11 @@ public class ObservableTest {
         ).count()
         .subscribe(data -> System.out.println("concat data is " + data));
     }
+
+    @Test
+    public void scan_test() {
+        Observable.just("hello", "world", "waldo")
+            .scan((x, y) -> String.format("%s%s", x, y))
+            .subscribe(result -> System.out.println("scan result is " + result));
+    }
 }
