@@ -333,4 +333,11 @@ public class ObservableTest {
         Observable.sequenceEqual(listThird, listForth)
             .subscribe(System.out::println);
     }
+
+    @Test
+    public void count_test() {
+        Observable.fromIterable(Arrays.asList(1,2,3,4,5,100))
+            .count()
+            .subscribe(data -> System.out.println("Count is " + data));
+    }
 }
