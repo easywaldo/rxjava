@@ -340,4 +340,11 @@ public class ObservableTest {
             .count()
             .subscribe(data -> System.out.println("Count is " + data));
     }
+
+    @Test
+    public void reduce_test() {
+        Observable.fromIterable(Arrays.asList(1,2,3,4,5,100))
+            .reduce(Integer::sum)
+            .subscribe(data -> System.out.println("Reduce is " + data));
+    }
 }
