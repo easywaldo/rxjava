@@ -2,9 +2,13 @@ import hu.akarnokd.rxjava3.math.MathFlowable;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.processors.PublishProcessor;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
 
 public class FlowableTest {
     @Test
@@ -53,5 +57,16 @@ public class FlowableTest {
         processor.onComplete();
 
 
+    }
+
+    @Test
+    public void doSquareTest() {
+        List square = new ArrayList();
+        Flowable.range(1, 100)
+            .observeOn(Schedulers.computation())
+            .map(v -> v * 2)
+            .blockingSubscribe(square::add);
+        System.out.println(square.size());
+        square.forEach(System.out::println);
     }
 }
