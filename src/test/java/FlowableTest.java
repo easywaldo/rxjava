@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
 
 
 public class FlowableTest {
@@ -61,12 +62,32 @@ public class FlowableTest {
 
     @Test
     public void doSquareTest() {
+        var start = System.currentTimeMillis();
         List square = new ArrayList();
         Flowable.range(1, 100)
             .observeOn(Schedulers.computation())
             .map(v -> v * 2)
             .blockingSubscribe(square::add);
+        var end = System.currentTimeMillis();
         System.out.println(square.size());
         square.forEach(System.out::println);
+        System.out.println(String.format("%s, %s, %s", start , end, end - start));
+    }
+
+    @Test
+    public void parallelTest() {
+        var start = System.currentTimeMillis();
+        List square = new ArrayList();
+        Flowable.range(1, 64)
+            .flatMap(v -> Flowable.just(v)
+                .subscribeOn(Schedulers.computation())
+                .map(w -> w * 2)
+            )
+            .doOnError(err -> err.printStackTrace())
+            .doOnComplete(() -> System.out.println("Completed"))
+            .blockingSubscribe(square::add);
+        var end = System.currentTimeMillis();
+        square.forEach(System.out::println);
+        System.out.println(String.format("%s, %s, %s", start , end, end - start));
     }
 }
