@@ -4,6 +4,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.processors.PublishProcessor;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.junit.Test;
+import org.junit.internal.Throwables;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,5 +90,19 @@ public class FlowableTest {
         var end = System.currentTimeMillis();
         square.forEach(System.out::println);
         System.out.println(String.format("%s, %s, %s", start , end, end - start));
+    }
+
+    @Test
+    public void schedulersTest() {
+        Flowable<String> source = Flowable.fromCallable(() -> {
+            Thread.sleep(1000);
+            return "Done";
+        });
+        source.doOnComplete(() -> System.out.println("Completed runComputaion"));
+        Flowable<String> background = source.subscribeOn(   Schedulers.io());
+        Flowable<String> foreground = background.observeOn(Schedulers.single());
+        foreground.subscribe(x -> System.out.println(x));
+        background.blockingSubscribe(x -> System.out.println(x));
+
     }
 }
