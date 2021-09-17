@@ -1,4 +1,5 @@
 import hu.akarnokd.rxjava3.math.MathFlowable;
+import io.reactivex.rxjava3.core.BackpressureStrategy;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.observers.TestObserver;
@@ -128,5 +129,16 @@ public class FlowableTest {
     public void testSubscriber() {
         TestSubscriber<Integer> testSubscriber = Flowable.range(1, 5).test();
         testSubscriber.assertValueCount(5);
+    }
+
+    @Test
+    public void testSubscriber2() {
+        Flowable<Integer> flowable = Flowable.create(source -> {
+            source.onNext(1);
+            source.onError(new RuntimeException());
+        }, BackpressureStrategy.LATEST);
+        TestSubscriber<Integer> testSubscriber = flowable.test();
+        testSubscriber.assertNotComplete();
+        //testSubscriber.assertError(new RuntimeException());
     }
 }
