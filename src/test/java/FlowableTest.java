@@ -5,12 +5,15 @@ import io.reactivex.rxjava3.observers.TestObserver;
 import io.reactivex.rxjava3.processors.PublishProcessor;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.schedulers.TestScheduler;
+import io.reactivex.rxjava3.subscribers.TestSubscriber;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static junit.framework.TestCase.assertEquals;
 
 
 public class FlowableTest {
@@ -119,5 +122,11 @@ public class FlowableTest {
         testObserver.assertNoErrors();
         testObserver.assertValues("0-foo", "1-bar");
         testObserver.assertNotComplete();
+    }
+
+    @Test
+    public void testSubscriber() {
+        TestSubscriber<Integer> testSubscriber = Flowable.range(1, 5).test();
+        testSubscriber.assertValueCount(5);
     }
 }
