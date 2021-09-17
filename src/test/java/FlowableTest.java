@@ -1,15 +1,16 @@
 import hu.akarnokd.rxjava3.math.MathFlowable;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.observers.TestObserver;
 import io.reactivex.rxjava3.processors.PublishProcessor;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.schedulers.TestScheduler;
 import org.junit.Test;
-import org.junit.internal.Throwables;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
 
 public class FlowableTest {
@@ -104,5 +105,19 @@ public class FlowableTest {
         foreground.subscribe(x -> System.out.println(x));
         background.blockingSubscribe(x -> System.out.println(x));
 
+    }
+
+    @Test
+    public void testScheduler() {
+        TestScheduler schedulersTest = new TestScheduler();
+        Observable<Long> tick = Observable.interval(1, TimeUnit.SECONDS, schedulersTest);
+        Observable<String> observable = Observable.just("foo", "bar", "biz", "baz")
+            .zipWith(tick, (string, index) -> index + "-" + string);
+
+        TestObserver<String> testObserver = observable.subscribeOn(schedulersTest).test();
+        schedulersTest.advanceTimeBy(2300, TimeUnit.MILLISECONDS);
+        testObserver.assertNoErrors();
+        testObserver.assertValues("0-foo", "1-bar");
+        testObserver.assertNotComplete();
     }
 }
